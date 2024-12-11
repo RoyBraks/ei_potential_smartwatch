@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:sensors_plus/sensors_plus.dart';
 
 void main() {
   runApp(const MainApp());
