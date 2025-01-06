@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MainApp());
@@ -77,19 +79,50 @@ class TimerSection extends StatelessWidget {
   }
 }
 
-class MetricsSection extends StatelessWidget {
+class MetricsSection extends StatefulWidget {
   const MetricsSection({
     super.key,
   });
 
   @override
+  State<MetricsSection> createState() => _MetricsSectionState();
+}
+
+class _MetricsSectionState extends State<MetricsSection> {
+  int _heartrate = 123;
+
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startNumberUpdater();
+  }
+
+  void startNumberUpdater() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      var rnd = Random().nextInt(10);
+
+      if (rnd <= 5) {
+        setState(() {
+          _heartrate++;
+        });
+      } else {
+        setState(() {
+          _heartrate--;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.only(left: 25, right: 25),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
+          const Expanded(
             flex: 1,
             child: 
               Column(
@@ -119,7 +152,7 @@ class MetricsSection extends StatelessWidget {
                   Icon(Icons.favorite,
                     color: Colors.red,
                   ),
-                  Text('77', 
+                  Text('$_heartrate', 
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 34,
