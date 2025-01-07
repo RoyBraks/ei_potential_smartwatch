@@ -105,9 +105,8 @@ class _TimerSectionState extends State<TimerSection> {
           timerStarted = true;
         } else {
           timerStarted = false;
-        };
+        }
         startStopTimer();
-        print(secondsConvert);
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -159,6 +158,8 @@ class _MetricsSectionState extends State<MetricsSection> {
 
   late Timer _timer;
 
+  int timerTime = 0;
+
   @override
   void initState() {
     super.initState();
@@ -168,16 +169,26 @@ class _MetricsSectionState extends State<MetricsSection> {
 
   void startNumberUpdater() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      timerTime++;
       var rnd = Random().nextInt(10);
-
-      if (rnd < 5) {
-        setState(() {
-          _heartrate++;
-        });
+      if (timerTime <= 60) {
+          if (rnd < 5) {
+          setState(() {
+            _heartrate++;
+          });
+        } 
       } else {
-        setState(() {
-          _heartrate--;
-        });
+
+        if (rnd < 5) {
+          setState(() {
+            _heartrate++;
+          });
+        } else {
+          setState(() {
+            _heartrate--;
+          });
+        }
+
       }
     });
   }
