@@ -37,44 +37,110 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class TimerSection extends StatelessWidget {
+class TimerSection extends StatefulWidget {
   const TimerSection({
     super.key,
   });
 
   @override
+  State<TimerSection> createState() => _TimerSectionState();
+}
+
+class _TimerSectionState extends State<TimerSection> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    startStopTimer();
+  }
+
+  int stopwatchTime = 0;
+  int minutes = 0;
+  int seconds = 0;
+
+  String minutesConvert = "00";
+  String secondsConvert = "00";
+
+  bool timerStarted = false;
+
+  Timer? _stopwatch;
+
+  void startStopTimer() {
+    if (timerStarted == true) {
+      stopwatchTime = 0;
+      seconds = 0;
+      minutes = 0;
+      _stopwatch = Timer.periodic(const Duration(seconds: 1), (Timer timer){
+        stopwatchTime++;
+        seconds++;
+        if (seconds == 60) {
+          minutes++;
+          seconds = 0;
+        }
+          setState(() {
+            minutesConvert = minutes.toString().padLeft(2, '0');
+          });
+
+          setState(() {    
+            secondsConvert = seconds.toString().padLeft(2, '0');  
+          });
+      });
+      
+    } else {
+      if (_stopwatch == null) {
+        
+      } else {
+        _stopwatch!.cancel();
+      }
+    }
+
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text('03', 
-          style: TextStyle(
-            color: Color.fromRGBO(41, 230, 223, 1),
-            fontSize: 18,
-            height: 1,
+    return GestureDetector(
+      onTap: (){
+        if (timerStarted == false) {
+          timerStarted = true;
+        } else {
+          timerStarted = false;
+        };
+        startStopTimer();
+        print(secondsConvert);
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text('$minutesConvert', 
+            style: TextStyle(
+              color: Color.fromRGBO(41, 230, 223, 1),
+              fontSize: 18,
+              height: 1,
+            ),
           ),
-        ),
-        Text('min', 
-          style: TextStyle(
-            color: Color.fromRGBO(41, 230, 223, 1),
-            fontSize: 6,
+          Text('min', 
+            style: TextStyle(
+              color: Color.fromRGBO(41, 230, 223, 1),
+              fontSize: 6,
+            ),
           ),
-        ),
-        Text('23', 
-          style: TextStyle(
-            color: Color.fromRGBO(41, 230, 223, 1),
-            fontSize: 18,
-            height: 1,
+          Text('$secondsConvert', 
+            style: TextStyle(
+              color: Color.fromRGBO(41, 230, 223, 1),
+              fontSize: 18,
+              height: 1,
+            ),
           ),
-        ),
-        Text('sec', 
-          style: TextStyle(
-            color: Color.fromRGBO(41, 230, 223, 1),
-            fontSize: 6,
+          Text('sec', 
+            style: TextStyle(
+              color: Color.fromRGBO(41, 230, 223, 1),
+              fontSize: 6,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -89,7 +155,7 @@ class MetricsSection extends StatefulWidget {
 }
 
 class _MetricsSectionState extends State<MetricsSection> {
-  int _heartrate = 123;
+  int _heartrate = 80;
 
   late Timer _timer;
 
@@ -99,11 +165,12 @@ class _MetricsSectionState extends State<MetricsSection> {
     startNumberUpdater();
   }
 
+
   void startNumberUpdater() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       var rnd = Random().nextInt(10);
 
-      if (rnd <= 5) {
+      if (rnd < 5) {
         setState(() {
           _heartrate++;
         });
@@ -114,7 +181,7 @@ class _MetricsSectionState extends State<MetricsSection> {
       }
     });
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
