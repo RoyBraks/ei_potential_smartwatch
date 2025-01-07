@@ -115,27 +115,27 @@ class _TimerSectionState extends State<TimerSection> {
           Text('$minutesConvert', 
             style: TextStyle(
               color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 18,
+              fontSize: 24,
               height: 1,
             ),
           ),
           Text('min', 
             style: TextStyle(
               color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 6,
+              fontSize: 12,
             ),
           ),
           Text('$secondsConvert', 
             style: TextStyle(
               color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 18,
+              fontSize: 24,
               height: 1,
             ),
           ),
           Text('sec', 
             style: TextStyle(
               color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 6,
+              fontSize: 12,
             ),
           ),
         ],
@@ -192,6 +192,35 @@ class _MetricsSectionState extends State<MetricsSection> {
       }
     });
   }
+
+  int speedNotation = 1;
+  String speedNotationString = "km/h";
+  String speedValue = "60";
+
+  void changeSpeednotation() {
+    if (speedNotation == 1) {
+      setState(() {
+        speedNotationString = "km/h";
+      });
+      setState(() {
+        speedValue = "60";
+      });
+    } else if (speedNotation == 2) {
+      setState(() {
+        speedNotationString = "mph";
+      });
+      setState(() {
+        speedValue = "45";
+      });
+    } else {
+      setState(() {
+        speedNotationString = "m/min";
+      });
+      setState(() {
+        speedValue = "200";
+      });
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -200,27 +229,38 @@ class _MetricsSectionState extends State<MetricsSection> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Expanded(
+          Expanded(
             flex: 1,
             child: 
-              Column(
-                children: [
-                  Icon(Icons.speed, 
-                    color: Colors.yellowAccent,
-                  ),
-                  Text('23', 
-                    style: TextStyle(
+              GestureDetector(
+                onTap: () {
+                  if (speedNotation < 3) {
+                    speedNotation++;
+                    changeSpeednotation();
+                  } else {
+                    speedNotation = 1;
+                    changeSpeednotation();
+                  }
+                },
+                child: Column(
+                  children: [
+                    Icon(Icons.speed, 
                       color: Colors.yellowAccent,
-                      fontSize: 34,
-                      height: 1.2,
                     ),
-                  ),
-                  Text('km/h',
-                    style: TextStyle(
-                      color: Colors.yellowAccent,
+                    Text('$speedValue', 
+                      style: TextStyle(
+                        color: Colors.yellowAccent,
+                        fontSize: 34,
+                        height: 1.2,
+                      ),
                     ),
-                  ),
-                ],
+                    Text('$speedNotationString',
+                      style: TextStyle(
+                        color: Colors.yellowAccent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
           ),
           Expanded(
