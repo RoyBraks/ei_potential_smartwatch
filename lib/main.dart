@@ -1,7 +1,7 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MainApp());
@@ -48,11 +48,17 @@ class TimerSection extends StatefulWidget {
 
 class _TimerSectionState extends State<TimerSection> {
 
+  String formattedDate = "00:00:00";
 
   @override
   void initState() {
     super.initState();
     startStopTimer();
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      setState(() {
+        formattedDate = DateFormat('HH:mm:ss').format(DateTime.now());
+      });
+    });
   }
 
   int stopwatchTime = 0;
@@ -65,7 +71,6 @@ class _TimerSectionState extends State<TimerSection> {
   bool timerStarted = false;
 
   Timer? _stopwatch;
-
   void startStopTimer() {
     if (timerStarted == true) {
       stopwatchTime = 0;
@@ -108,36 +113,55 @@ class _TimerSectionState extends State<TimerSection> {
         }
         startStopTimer();
       },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
         children: [
-          Text('$minutesConvert', 
-            style: TextStyle(
-              color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 24,
-              height: 1,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('$minutesConvert', 
+                style: TextStyle(
+                  color: Color.fromRGBO(41, 230, 223, 1),
+                  fontSize: 20,
+                  height: 1,
+                ),
+              ),
+              Text('min', 
+                style: TextStyle(
+                  color: Color.fromRGBO(41, 230, 223, 1),
+                  fontSize: 10,
+                ),
+              ),
+              Text('$secondsConvert', 
+                style: TextStyle(
+                  color: Color.fromRGBO(41, 230, 223, 1),
+                  fontSize: 20,
+                  height: 1,
+                ),
+              ),
+              Text('sec', 
+                style: TextStyle(
+                  color: Color.fromRGBO(41, 230, 223, 1),
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
-          Text('min', 
-            style: TextStyle(
-              color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 12,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('$formattedDate', 
+                  style: TextStyle(
+                    color: Color.fromRGBO(41, 230, 223, 1),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text('$secondsConvert', 
-            style: TextStyle(
-              color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 24,
-              height: 1,
-            ),
-          ),
-          Text('sec', 
-            style: TextStyle(
-              color: Color.fromRGBO(41, 230, 223, 1),
-              fontSize: 12,
-            ),
-          ),
+          )
         ],
       ),
     );
@@ -250,13 +274,14 @@ class _MetricsSectionState extends State<MetricsSection> {
                     Text('$speedValue', 
                       style: TextStyle(
                         color: Colors.yellowAccent,
-                        fontSize: 34,
+                        fontSize: 28,
                         height: 1.2,
                       ),
                     ),
                     Text('$speedNotationString',
                       style: TextStyle(
                         color: Colors.yellowAccent,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -273,13 +298,14 @@ class _MetricsSectionState extends State<MetricsSection> {
                   Text('$_heartrate', 
                     style: TextStyle(
                       color: Colors.red,
-                      fontSize: 34,
+                      fontSize: 28,
                       height: 1.2,
                     ),
                   ),
                   Text('bpm',
                     style: TextStyle(
-                      color: Colors.red
+                      color: Colors.red,
+                      fontSize: 12
                     ),
                   ),
                 ],
