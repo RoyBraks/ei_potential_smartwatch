@@ -7,12 +7,38 @@ void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+
+  bool showNotification = false;  
+
+  int timerTime = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      timerTime++;
+      if (timerTime % 60 == 0) {
+        setState(() {
+          showNotification = true;
+        });
+        Timer(const Duration(seconds: 10), () => setState(() {
+            showNotification = false;
+        }));
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const MaterialApp (
+    return MaterialApp (
       title: 'eiSmartWatch',
       home: Scaffold(
         backgroundColor: Color.fromRGBO(0, 21, 44, 1),
@@ -21,14 +47,50 @@ class MainApp extends StatelessWidget {
           child: Center(
             child: Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  MetricsSection(),
-                  TimerSection()
-                ],
-              ),
+              child: Builder(
+                builder: (context) {
+                  if(!showNotification) {
+                    return Container(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                            MetricsSection(),
+                            TimerSection()
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('Warning', 
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              height: 1,
+                            ),
+                          ),
+                          Icon(
+                            Icons.back_hand,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          Text('Intensity too high', 
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                }
+              )
+
             ),
           )
         ),
@@ -55,9 +117,11 @@ class _TimerSectionState extends State<TimerSection> {
     super.initState();
     startStopTimer();
     Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      setState(() {
-        formattedDate = DateFormat('HH:mm:ss').format(DateTime.now());
-      });
+      if (mounted) {
+        setState(() {
+          formattedDate = DateFormat('HH:mm:ss').format(DateTime.now());
+        });    
+      }
     });
   }
 
@@ -83,13 +147,15 @@ class _TimerSectionState extends State<TimerSection> {
           minutes++;
           seconds = 0;
         }
+        if (mounted) {
           setState(() {
             minutesConvert = minutes.toString().padLeft(2, '0');
           });
 
           setState(() {    
             secondsConvert = seconds.toString().padLeft(2, '0');  
-          });
+          });       
+        }
       });
       
     } else {
@@ -172,13 +238,14 @@ class MetricsSection extends StatefulWidget {
   const MetricsSection({
     super.key,
   });
+  @override
 
   @override
   State<MetricsSection> createState() => _MetricsSectionState();
 }
 
 class _MetricsSectionState extends State<MetricsSection> {
-  int _heartrate = 80;
+  int _heartrate = 90;
 
   late Timer _timer;
 
@@ -195,22 +262,28 @@ class _MetricsSectionState extends State<MetricsSection> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       timerTime++;
       var rnd = Random().nextInt(10);
-      if (timerTime <= 60) {
+      if (timerTime <= 20) {
           if (rnd < 5) {
-          setState(() {
-            _heartrate++;
-          });
+            if (mounted) {
+              setState(() {
+                _heartrate++;
+              });      
+            }
         } 
       } else {
 
-        if (rnd < 5) {
-          setState(() {
-            _heartrate++;
-          });
+        if (rnd < 5 || _heartrate <= 100) {
+          if (mounted) {
+            setState(() {
+              _heartrate++;
+            });       
+          }
         } else {
-          setState(() {
-            _heartrate--;
-          });
+          if (mounted) {
+            setState(() {
+              _heartrate--;
+            });        
+          }
         }
 
       }
@@ -222,21 +295,21 @@ class _MetricsSectionState extends State<MetricsSection> {
   String speedValue = "60";
 
   void changeSpeednotation() {
-    if (speedNotation == 1) {
+    if (speedNotation == 1 && mounted) {
       setState(() {
         speedNotationString = "km/h";
       });
       setState(() {
         speedValue = "60";
       });
-    } else if (speedNotation == 2) {
+    } else if (speedNotation == 2 && mounted) {
       setState(() {
         speedNotationString = "mph";
       });
       setState(() {
         speedValue = "45";
       });
-    } else {
+    } else if (mounted) {
       setState(() {
         speedNotationString = "m/min";
       });
